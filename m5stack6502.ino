@@ -15,6 +15,11 @@ extern "C" {
 #include "fake6502.h"
 }
 
+void term_init();
+void term_write(byte data);
+int term_available();
+char term_read();
+
 #include "rom.h"
 #define ACIAControl 0
 #define ACIAStatus 0
@@ -71,6 +76,7 @@ write6850(uint16_t address, uint8_t value) {
 			break;
 		case ACIAData: {
       Serial.write(value);
+      term_write(value);
 			break;
     }
 		default:
@@ -113,12 +119,13 @@ write6502(uint16_t address, uint8_t value) {
 }
 
 void setup() {
-  M5.begin();
+  term_init();
+  
   Serial.begin(115200);
 
-  Serial.print("6502 reset,,,...\n");
+  Serial.println("6502 reset...");
   reset6502();
-  Serial.print("6502 Starting...\n");
+  Serial.println("6502 Starting...");
 }
 
 void loop() {
@@ -126,6 +133,13 @@ void loop() {
     if (Serial.available()) {
       process_serial_input_byte(Serial.read());
     }
+    if (term_available()) {
+      char c = term_read();
+      if (c != 0) {
+        process_serial_input_byte(c);
+      }
+    }
+    
     step6502();
   }
 }
