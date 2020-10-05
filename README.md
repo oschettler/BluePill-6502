@@ -4,7 +4,7 @@
 ```
 /*
   Small 6502 emulator for the M5Stack
-  (c) olav@schettler.net
+  (c) 2020 olav@schettler.net
 
   Originally:
   - for the blue pill
